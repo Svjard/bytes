@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>bytes</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1>bytes</h1>
+<p>A simple and fast library to convert human readable sizes into their byte or bit count and vice-versa.<br>Copyright 2013 Clay Walker</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="keyword">function</span>() {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>We can shave a few cycles off conversions by creating a lookup table of units prefixes for both &quot;standard&quot; (base 1000) and &quot;metric&quot; (base 1024).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> prefixes = {
+    <span class="string">"K"</span>:  <span class="number">1000</span>,
+    <span class="string">"M"</span>:  <span class="number">1000000</span>,
+    <span class="string">"G"</span>:  <span class="number">1000000000</span>,
+    <span class="string">"T"</span>:  <span class="number">1000000000000</span>,
+    <span class="string">"P"</span>:  <span class="number">1000000000000000</span>,
+    <span class="string">"E"</span>:  <span class="number">1000000000000000000</span>,
+    <span class="string">"Z"</span>:  <span class="number">1000000000000000000000</span>,
+    <span class="string">"Y"</span>:  <span class="number">1000000000000000000000000</span>,
+    <span class="string">"Ki"</span>: <span class="number">1024</span>,
+    <span class="string">"Mi"</span>: <span class="number">1048576</span>,
+    <span class="string">"Gi"</span>: <span class="number">1073741824</span>,
+    <span class="string">"Ti"</span>: <span class="number">1099511627776</span>,
+    <span class="string">"Pi"</span>: <span class="number">1125899906842624</span>,
+    <span class="string">"Ei"</span>: <span class="number">1152921504606846976</span>,
+    <span class="string">"Zi"</span>: <span class="number">1180591620717411303424</span>,
+    <span class="string">"Yi"</span>: <span class="number">1208925819614629174706176</span>
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2>Bytes Object</h2>
+<p>The Bytes object represents a value.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> Bytes = (<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h3>Bytes() - Constructor</h3>
+<p>Optionally accepts the same arguments as <code>parse()</code> (see below).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="function"><span class="keyword">function</span> <span class="title">Bytes</span> <span class="params">()</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Internally, values are stored as <code>_bits</code>. To access the number of bits, please use the getter function <code>bits()</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">this</span>._bits = <span class="literal">undefined</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>If arguments are passed to the constructor, assume it is a value to be parsed.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (arguments.length !== <span class="number">0</span>) {
+        Bytes.prototype.parse.apply(<span class="keyword">this</span>, arguments);
+      }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3>parse()</h3>
+<p>Converts a bit or byte, string or numerical input into a number of bits and stores it internally.<br>Accepts a <code>size</code> that is either a string or number of bytes.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Bytes.prototype.parse = <span class="function"><span class="keyword">function</span> <span class="params">(size)</span> {</span>
+      <span class="keyword">if</span> (<span class="keyword">typeof</span> size === <span class="string">'string'</span>) {
+        <span class="keyword">var</span> re = <span class="regexp">/([0-9]+\.?[0-9]?) ?([KMGTPEZY]?i?)([Bb])/</span>;
+
+        <span class="keyword">if</span> (!re.test(size)) {
+          console.error(<span class="string">'bytes.js: Unable to parse size string.'</span>, size);
+          <span class="keyword">return</span>;
+        }
+
+        <span class="keyword">var</span> matches = re.exec(size);
+
+        <span class="keyword">var</span> value = matches[<span class="number">1</span>] * (prefixes[matches[<span class="number">2</span>]] || <span class="number">1</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Determine whether bits or bytes were provided.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> (matches[<span class="number">3</span>] === <span class="string">'b'</span>) {
+          <span class="keyword">this</span>._bits = value;
+        } <span class="keyword">else</span> {
+          <span class="keyword">this</span>._bits = value * <span class="number">8</span>;
+        }
+      } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> size === <span class="string">'number'</span>) {
+        <span class="keyword">this</span>._bits = size * <span class="number">8</span>;
+      } <span class="keyword">else</span> {
+        console.error(<span class="string">'bytes.js: Provided size is neither a string or a number.'</span>, JSON.stringify(size));
+        <span class="keyword">return</span>;
+      }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3>bytes()</h3>
+<h3>toJSON()</h3>
+<p>Returns the number of bytes.<br>The JSON serialization of a <code>Bytes</code> object is the number of bytes as an integer.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Bytes.prototype.bytes = Bytes.prototype.toJSON = <span class="keyword">function</span>() {
+      <span class="keyword">return</span> Math.ceil(<span class="keyword">this</span>._bits / <span class="number">8</span>);
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h3>bits()</h3>
+<p>Returns the number of bits.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Bytes.prototype.bits = <span class="keyword">function</span>() {
+      <span class="keyword">return</span> <span class="keyword">this</span>._bits;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h3>humanize()</h3>
+<p>Convert the internal number of bits into a human-friendly format.<br>Accepts an <code>options</code> hash with the following options (Option - Type - Default):<br><em> metric - boolean - false
+</em> nospace - boolean - false
+<em> precise - boolean - false
+</em> unit - string - &#39;B&#39;
+Returns a human-friendly string.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Bytes.prototype.humanize = <span class="function"><span class="keyword">function</span> <span class="params">(options)</span> {</span>
+      <span class="keyword">if</span> (!options) {
+        <span class="keyword">var</span> options = {};
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>If <code>metric</code> is specified, the output format will be in terms of metric bits or bytes (&quot;GiB&quot; for example).
+By default standard units are assumed, the output format will be in terms of standard bits or bytes (&quot;GB&quot; for example).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (options.metric) {
+        <span class="keyword">var</span> base = <span class="number">1024</span>;
+      } <span class="keyword">else</span> {
+        <span class="keyword">var</span> base = <span class="number">1000</span>;
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>If <code>unit</code> is specified as bits, the output will be in terms of bits.
+By default bytes are assumed.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (options.unit === <span class="string">'b'</span>) {
+        <span class="keyword">var</span> value = <span class="keyword">this</span>._bits;
+      } <span class="keyword">else</span> {
+        options.unit = <span class="string">'B'</span>;
+        <span class="keyword">var</span> value = Math.ceil(<span class="keyword">this</span>._bits / <span class="number">8</span>);
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Determine a reasonable prefix to use.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (value &lt; base) {
+        <span class="keyword">var</span> prefix = <span class="string">''</span>;
+      } <span class="keyword">else</span> <span class="keyword">if</span> (value &gt;= base * base * base * base * base * base * base * base) {
+        value /= base * base * base * base * base * base * base * base;
+        <span class="keyword">var</span> prefix = <span class="string">'Y'</span>;
+      } <span class="keyword">else</span> <span class="keyword">if</span> (value &gt;= base * base * base * base * base * base * base) {
+        value /= base * base * base * base * base * base * base;
+        <span class="keyword">var</span> prefix = <span class="string">'Z'</span>;
+      } <span class="keyword">else</span> <span class="keyword">if</span> (value &gt;= base * base * base * base * base * base) {
+        value /= base * base * base * base * base * base;
+        <span class="keyword">var</span> prefix = <span class="string">'E'</span>;
+      } <span class="keyword">else</span> <span class="keyword">if</span> (value &gt;= base * base * base * base * base) {
+        value /= base * base * base * base * base;
+        <span class="keyword">var</span> prefix = <span class="string">'P'</span>;
+      } <span class="keyword">else</span> <span class="keyword">if</span> (value &gt;= base * base * base * base) {
+        value /= base * base * base * base;
+        <span class="keyword">var</span> prefix = <span class="string">'T'</span>;
+      } <span class="keyword">else</span> <span class="keyword">if</span> (value &gt;= base * base * base) {
+        value /= base * base * base;
+        <span class="keyword">var</span> prefix = <span class="string">'G'</span>;
+      } <span class="keyword">else</span> <span class="keyword">if</span> (value &gt;= base * base) {
+        value /= base * base;
+        <span class="keyword">var</span> prefix = <span class="string">'M'</span>;
+      } <span class="keyword">else</span> <span class="keyword">if</span> (value &gt;= base) {
+        value /= base;
+        <span class="keyword">var</span> prefix = <span class="string">'K'</span>;
+      }
+
+      <span class="keyword">if</span> (options.metric &amp;&amp; prefix !== <span class="string">''</span>) {
+        prefix += <span class="string">'i'</span>;
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>If <code>precise</code> is true, the full precision is preserved.
+By default, the returned value is rounded to two decimal places.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (!options.precise &amp;&amp; prefix !== <span class="string">''</span>) {
+        value = value.toFixed(<span class="number">2</span>)
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>If <code>nospace</code> is true, a space will not be inserted between the value and the prefix in the output string.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (options.nospace) {
+        <span class="keyword">var</span> space = <span class="string">""</span>;
+      } <span class="keyword">else</span> {
+        <span class="keyword">var</span> space = <span class="string">" "</span>;
+      }
+
+      <span class="keyword">return</span> value + space + prefix + options.unit;
+    };
+
+    <span class="keyword">return</span> Bytes;
+  })();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h2>Node.js and AMD compatibility</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> (<span class="keyword">typeof</span> module !== <span class="string">'undefined'</span> &amp;&amp; <span class="keyword">typeof</span> module.exports !== <span class="string">'undefined'</span>) {
+    module.exports = Bytes;
+  } <span class="keyword">else</span> {
+    <span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd) {
+      define([], <span class="keyword">function</span>() { <span class="keyword">return</span> Bytes; });
+    } <span class="keyword">else</span> {
+      window.Bytes = Bytes;
+    }
+  }
+
+})();</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

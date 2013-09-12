@@ -1,0 +1,32 @@
+{
+  "name": "bytes",
+  "preferGlobal": true,
+  "version": "0.0.0",
+  "author": "Clay Walker <clayzermk1@gmail.com>",
+  "description": "A simple and fast library to convert human readable sizes into their byte or bit count and vice-versa.",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/test.js",
+    "browsertest": "./node_modules/.bin/mocha-phantomjs -R dot test/browser.html",
+    "docs": "./node_modules/.bin/docco src/bytes.js"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clayzermk1/bytes.git"
+  },
+  "keywords": [
+    "bytes",
+    "humanize"
+  ],
+  "devDependencies": {
+    "docco": "*",
+    "mocha": "*",
+    "mocha-phantomjs": "*",
+    "phantomjs": "*",
+    "chai": "*"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10"
+  }
+}
