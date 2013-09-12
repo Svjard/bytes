@@ -1,0 +1,19 @@
+{
+  "name": "bytes",
+  "version": "0.0.0",
+  "authors": [
+    "Clay Walker <clayzermk1@gmail.com>"
+  ],
+  "description": "A simple and fast library to convert human readable sizes into their byte or bit count and vice-versa.",
+  "main": "src/bytes.js",
+  "keywords": [
+    "bytes",
+    "bits",
+    "humanize"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/clayzermk1/bytes",
+  "devDependencies": {
+    "requirejs": "*"
+  }
+}
